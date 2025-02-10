@@ -5,8 +5,14 @@ module.exports = function(config) {
     systemjs: {
       configFile: 'config.js',
       config: {
+        meta: {
+          typescript: {
+            format: "global",
+            exports: "ts"
+          }
+        },
         paths: {
-          "*": null,
+          "*": "*",
           "src/*": "src/*",
           "typescript": "node_modules/typescript/lib/typescript.js",
           "systemjs": "node_modules/systemjs/dist/system.js",
@@ -21,14 +27,20 @@ module.exports = function(config) {
             defaultExtension: 'ts'
           }
         },
-        transpiler: 'typescript'
+        transpiler: 'typescript',
+        typescriptOptions : {
+          "module": "amd",
+          "emitDecoratorMetadata": true,
+          "experimentalDecorators": true
+        }
       },
       serveFiles: [
-        'src/**/*.ts',
+        'src/**/*.*',
         'jspm_packages/**/*.js'
       ]
     },
     files: [
+      'test/unit/setup.ts',
       'test/unit/*.ts'
     ],
     exclude: [],

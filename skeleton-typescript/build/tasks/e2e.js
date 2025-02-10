@@ -2,9 +2,9 @@ var gulp = require('gulp');
 var paths = require('../paths');
 var plumber = require('gulp-plumber');
 var webdriverUpdate = require('gulp-protractor').webdriver_update;
-var webdriverStandalone = require("gulp-protractor").webdriver_standalone;
+var webdriverStandalone = require('gulp-protractor').webdriver_standalone;
 var protractor = require('gulp-protractor').protractor;
-var typescript = require('gulp-tsb');
+var typescript = require('gulp-typescript');
 var assign = Object.assign || require('object.assign');
 var del = require('del');
 
@@ -23,7 +23,10 @@ gulp.task('clean-e2e', function() {
 var typescriptCompiler = typescriptCompiler || null;
 gulp.task('build-e2e', ['clean-e2e'], function() {
   if(!typescriptCompiler) {
-    typescriptCompiler = typescript.create(assign(require('../../tsconfig.json').compilerOptions, {module: 'commonjs'}));
+    typescriptCompiler = typescript.createProject('tsconfig.e2e.json', {
+      "typescript": require('typescript'),
+      module: 'commonjs'
+    });
   }
   return gulp.src(paths.dtsSrc.concat(paths.e2eSpecsSrc))
     .pipe(typescriptCompiler())

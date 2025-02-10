@@ -1,0 +1,46 @@
+#####
+# Circle CI
+# 
+# For running docker images on circle ci, see: https://circleci.com/docs/docker
+# For circle.yml explanation, see: https://circleci.com/docs/manually
+#####
+
+machine:
+  node:
+    version: 7
+
+dependencies:
+  pre:
+    - npm install -g yarn jspm
+    - google-chrome --version
+    - curl -L -o google-chrome.deb https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
+    - sudo dpkg -i google-chrome.deb
+    - sudo sed -i 's|HERE/chrome\"|HERE/chrome\" --disable-setuid-sandbox|g' /opt/google/chrome/google-chrome
+    - rm google-chrome.deb
+    - google-chrome --version
+  override:
+    - cd skeleton-esnext-webpack && yarn --ignore-engines
+    - cd skeleton-typescript-webpack && yarn --ignore-engines
+    - cd skeleton-esnext && yarn --ignore-engines
+    - cd skeleton-esnext && jspm install
+    #- cd skeleton-typescript && yarn --ignore-engines
+    #- cd skeleton-typescript && jspm install
+  cache_directories:
+    - "skeleton-esnext/node_modules"
+    - "skeleton-esnext/jspm_packages"
+    - "skeleton-esnext-webpack/node_modules"
+    - "skeleton-typescript/node_modules"
+    - "skeleton-typescript/jspm_packages"
+    - "skeleton-typescript-webpack/node_modules"
+    - "~/.yarn-cache"
+
+test:
+  override:
+    - cd skeleton-typescript-webpack && yarn start -- test.all
+    - cd skeleton-typescript-webpack && yarn start -- webpack.build
+    - cd skeleton-typescript-webpack && yarn start -- webpack.build.development
+    - cd skeleton-esnext-webpack && yarn start -- test.all
+    - cd skeleton-esnext-webpack && yarn start -- webpack.build
+    - cd skeleton-esnext-webpack && yarn start -- webpack.build.development
+    - cd skeleton-esnext && yarn run test
+    #- cd skeleton-typescript && yarn run test
